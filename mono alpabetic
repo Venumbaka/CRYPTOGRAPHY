@@ -1,0 +1,43 @@
+import string
+import random
+
+def generate_key():
+    alphabet = list(string.ascii_lowercase)
+    shuffled = alphabet[:]
+    random.shuffle(shuffled)
+    return dict(zip(alphabet, shuffled))
+
+def encrypt(plaintext, key):
+    ciphertext = ''
+    for char in plaintext:
+        if char.islower():
+            ciphertext += key[char]
+        elif char.isupper():
+            ciphertext += key[char.lower()].upper()
+        else:
+            ciphertext += char
+    return ciphertext
+
+def decrypt(ciphertext, key):
+    reverse_key = {v: k for k, v in key.items()}
+    plaintext = ''
+    for char in ciphertext:
+        if char.islower():
+            plaintext += reverse_key[char]
+        elif char.isupper():
+            plaintext += reverse_key[char.lower()].upper()
+        else:
+            plaintext += char
+    return plaintext
+
+# Generate a random key
+key = generate_key()
+print(f"Key: {key}")
+
+# Example usage
+plaintext = "Hello, World!"
+encrypted_text = encrypt(plaintext, key)
+print(f"Encrypted: {encrypted_text}")
+
+decrypted_text = decrypt(encrypted_text, key)
+print(f"Decrypted: {decrypted_text}")
