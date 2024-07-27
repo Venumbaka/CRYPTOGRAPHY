@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <stdint.h>
+
+// Simplified ECB encryption function placeholder
+void ecbEncrypt(uint8_t *plaintext, uint8_t *ciphertext, uint8_t *key) {
+    // ECB encryption logic goes here
+    for (int i = 0; i < 16; i++) ciphertext[i] = plaintext[i]; // Dummy implementation
+}
+
+int main() {
+    uint8_t plaintext[16] = "plaintext_data";
+    uint8_t ciphertext[16];
+    uint8_t key[16] = "encryption_key_";
+    ecbEncrypt(plaintext, ciphertext, key);
+
+    // Simulate an error in ciphertext
+    ciphertext[0] ^= 0xFF; // Bit error
+
+    // Error propagation demonstration
+    printf("Ciphertext with error: %s\n", ciphertext);
+    return 0;
+}
