@@ -1,0 +1,128 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define SIZE 5
+
+void toUpperCase(char str[], int size) {
+    for (int i = 0; i < size; i++) {
+        if (str[i] >= 'a' && str[i] <= 'z') {
+            str[i] -= 32;
+        }
+    }
+}
+
+void removeDuplicates(char str[], int size) {
+    int index = 0;
+
+    for (int i = 0; i < size; i++) {
+        int j;
+        for (j = 0; j < i; j++) {
+            if (str[i] == str[j]) {
+                break;
+            }
+        }
+        if (j == i) {
+            str[index++] = str[i];
+        }
+    }
+
+    str[index] = '\0';
+}
+
+void generateKeyTable(char key[], char keyTable[SIZE][SIZE]) {
+    int map[26] = {0};
+    int index = 0;
+    for (int i = 0; i < strlen(key); i++) {
+        if (key[i] != 'J' && !map[key[i] - 'A']) {
+            keyTable[index / SIZE][index % SIZE] = key[i];
+            map[key[i] - 'A'] = 1;
+            index++;
+        }
+    }
+
+    for (char ch = 'A'; ch <= 'Z'; ch++) {
+        if (ch != 'J' && !map[ch - 'A']) {
+            keyTable[index / SIZE][index % SIZE] = ch;
+            map[ch - 'A'] = 1;
+            index++;
+        }
+    }
+}
+
+void printTable(char keyTable[SIZE][SIZE]) {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            printf("%c ", keyTable[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+void search(char keyTable[SIZE][SIZE], char a, char b, int arr[]) {
+    if (a == 'J') a = 'I';
+    if (b == 'J') b = 'I';
+
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            if (keyTable[i][j] == a) {
+                arr[0] = i;
+                arr[1] = j;
+            }
+            if (keyTable[i][j] == b) {
+                arr[2] = i;
+                arr[3] = j;
+            }
+        }
+    }
+}
+
+void encrypt(char str[], char keyTable[SIZE][SIZE]) {
+    int size = strlen(str);
+    if (size % 2 != 0) {
+        str[size++] = 'X';
+        str[size] = '\0';
+    }
+
+    for (int i = 0; i < size; i += 2) {
+        int arr[4];
+        search(keyTable, str[i], str[i + 1], arr);
+
+        if (arr[0] == arr[2]) {
+            str[i] = keyTable[arr[0]][(arr[1] + 1) % SIZE];
+            str[i + 1] = keyTable[arr[2]][(arr[3] + 1) % SIZE];
+        } else if (arr[1] == arr[3]) {
+            str[i] = keyTable[(arr[0] + 1) % SIZE][arr[1]];
+            str[i + 1] = keyTable[(arr[2] + 1) % SIZE][arr[3]];
+        } else {
+            str[i] = keyTable[arr[0]][arr[3]];
+            str[i + 1] = keyTable[arr[2]][arr[1]];
+        }
+    }
+}
+
+int main() {
+    char key[SIZE * SIZE], str[100];
+    char keyTable[SIZE][SIZE];
+
+    printf("Enter the key: ");
+    gets(key);
+
+    printf("Enter the plaintext: ");
+    gets(str);
+
+    toUpperCase(key, strlen(key));
+    toUpperCase(str, strlen(str));
+    removeDuplicates(key, strlen(key));
+    
+    generateKeyTable(key, keyTable);
+
+    printf("Key Table:\n");
+    printTable(keyTable);
+
+    encrypt(str, keyTable);
+
+    printf("Encrypted text: %s\n", str);
+
+    return 0;
+}
