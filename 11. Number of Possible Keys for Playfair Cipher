@@ -1,0 +1,13 @@
+#include <stdio.h>
+
+unsigned long long factorial(int n) {
+    if (n == 0) return 1;
+    return n * factorial(n - 1);
+}
+
+int main() {
+    int n = 25;
+    unsigned long long num_keys = factorial(n);
+    printf("Number of possible Playfair keys: %llu\n", num_keys);
+    return 0;
+}
