@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void toUpperCase(char str[]) {
+    for (int i = 0; str[i] != '\0'; i++) {
+        if (str[i] >= 'a' && str[i] <= 'z') {
+            str[i] -= 32;
+        }
+    }
+}
+
+void generateKey(char str[], char key[], int keyLength) {
+    int strLen = strlen(str), i, j;
+    for (i = 0, j = 0; i < strLen; i++, j++) {
+        if (j == keyLength) j = 0;
+        key[i] = key[j];
+    }
+    key[i] = '\0';
+}
+
+void encrypt(char str[], char key[]) {
+    int strLen = strlen(str);
+    for (int i = 0; i < strLen; i++) {
+        str[i] = ((str[i] + key[i]) % 26) + 'A';
+    }
+}
+
+void decrypt(char str[], char key[]) {
+    int strLen = strlen(str);
+    for (int i = 0; i < strLen; i++) {
+        str[i] = (((str[i] - key[i]) + 26) % 26) + 'A';
+    }
+}
+
+int main() {
+    char str[100], key[100], newKey[100];
+
+    printf("Enter the plaintext: ");
+    gets(str);
+
+    printf("Enter the key: ");
+    gets(key);
+
+    toUpperCase(str);
+    toUpperCase(key);
+    generateKey(str, key, strlen(key));
+
+    strcpy(newKey, key);
+
+    encrypt(str, newKey);
+    printf("Encrypted text: %s\n", str);
+
+    decrypt(str, newKey);
+    printf("Decrypted text: %s\n", str);
+
+    return 0;
+}
