@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <string.h>
+
+#define SIZE 2
+
+// Function to perform matrix multiplication
+void matrixMultiply(int A[SIZE][SIZE], int B[SIZE][SIZE], int result[SIZE][SIZE]) {
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            result[i][j] = 0;
+            for (int k = 0; k < SIZE; k++) {
+                result[i][j] += A[i][k] * B[k][j];
+                result[i][j] %= 26;
+            }
+        }
+    }
+}
+
+// Function to find the inverse matrix
+void inverseMatrix(int matrix[SIZE][SIZE], int inverse[SIZE][SIZE]) {
+    int det = (matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0] + 26) % 26;
+    int invDet = 0;
+
+    // Calculate modular inverse of det
+    for (int i = 1; i < 26; i++) {
+        if ((det * i) % 26 == 1) {
+            invDet = i;
+            break;
+        }
+    }
+
+    // Compute the inverse matrix
+    inverse[0][0] = (matrix[1][1] * invDet) % 26;
+    inverse[0][1] = (-matrix[0][1] * invDet + 26) % 26;
+    inverse[1][0] = (-matrix[1][0] * invDet + 26) % 26;
+    inverse[1][1] = (matrix[0][0] * invDet) % 26;
+}
+
+int main() {
+    // Example matrices
+    int plainTextMatrix[SIZE][SIZE] = {{8, 15}, {20, 13}}; // Known plaintext
+    int cipherTextMatrix[SIZE][SIZE] = {{13, 19}, {10, 6}}; // Corresponding ciphertext
+
+    int keyMatrix[SIZE][SIZE], inverseMatrixResult[SIZE][SIZE];
+    inverseMatrix(plainTextMatrix, inverseMatrixResult);
+
+    // Calculate key matrix
+    matrixMultiply(inverseMatrixResult, cipherTextMatrix, keyMatrix);
+
+    printf("Key Matrix:\n");
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            printf("%d ", keyMatrix[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
