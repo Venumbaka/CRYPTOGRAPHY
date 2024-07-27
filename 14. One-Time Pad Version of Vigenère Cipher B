@@ -1,0 +1,35 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_LENGTH 100
+
+void decrypt(char *ciphertext, int *keyStream, int keyLength, char *plaintext) {
+    int len = strlen(ciphertext);
+    for (int i = 0; i < len; i++) {
+        if (ciphertext[i] >= 'a' && ciphertext[i] <= 'z') {
+            plaintext[i] = ((ciphertext[i] - 'a' - keyStream[i % keyLength] + 26) % 26) + 'a';
+        } else if (ciphertext[i] >= 'A' && ciphertext[i] <= 'Z') {
+            plaintext[i] = ((ciphertext[i] - 'A' - keyStream[i % keyLength] + 26) % 26) + 'A';
+        } else {
+            plaintext[i] = ciphertext[i];
+        }
+    }
+    plaintext[len] = '\0';
+}
+
+int main() {
+    char ciphertext[MAX_LENGTH] = "YOUR_CIPHERTEXT_HERE";
+    char knownPlaintext[MAX_LENGTH] = "cash not needed";
+    int len = strlen(knownPlaintext);
+    int keyStream[MAX_LENGTH];
+    char decrypted[MAX_LENGTH];
+
+    decrypt(ciphertext, keyStream, len, decrypted);
+    printf("Key stream: ");
+    for (int i = 0; i < len; i++) {
+        printf("%d ", (decrypted[i] - knownPlaintext[i] + 26) % 26);
+    }
+    printf("\n");
+
+    return 0;
+}
